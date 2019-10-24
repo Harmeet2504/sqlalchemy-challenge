@@ -1,6 +1,6 @@
 # sqlalchemy-challenge
 
-Climate analysis for a long holiday vacation in Honolulu, Hawaiion. 
+Climate analysis for a long holiday vacation in Honolulu, Hawaii. 
 
 ## Step 1 - Climate Analysis and Exploration
 
