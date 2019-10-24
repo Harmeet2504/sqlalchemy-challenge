@@ -1,24 +1,25 @@
+#Import dependencies
 from flask import Flask, jsonify
-
 import sqlalchemy
 from sqlalchemy.ext.automap import automap_base
 from sqlalchemy.orm import Session
 from sqlalchemy import create_engine, func, inspect
-
 import numpy as np
 
+#Create engine to connect with database
 engine = create_engine("sqlite:///Resources/hawaii.sqlite")
 
-# reflect an existing database into a new model
+#Reflect an existing database into a new model
 Base = automap_base()
-# reflect the tables
+
+#Reflect the tables
 Base.prepare(engine, reflect=True)
 
-# Save references to each table
+#Save references to each table
 Measurement = Base.classes.measurement
 Station = Base.classes.station
 
-# Create our session (link) from Python to the DB
+# Create session (link)  to the DB
 session = Session(engine)
 
 def calc_temps(start_date, end_date):
@@ -42,7 +43,7 @@ app = Flask(__name__)
 @app.route("/")
 def welcome():
     return """
-    Welcome to the Hawaii Climate API!
+    Welcome to Climate API for Hawaii!
     Available endpoints: <br>
     /api/v1.0/precipitation <br>
     /api/v1.0/stations <br>
@@ -52,36 +53,34 @@ def welcome():
     """
 
 @app.route("/api/v1.0/precipitation")
-def precip():
+def precipitation():
     results = session.query(Measurement.date, Measurement.prcp).\
     filter(Measurement.date >= "2016-08-23").\
     filter(Measurement.date <= "2017-08-23").all()
 
-    results_dict = []
+    precipitation_dict = []
     for row in results:
         date_dict = {}
         date_dict[row.date] = row.prcp
-        results_dict.append(date_dict)
+        precipitation_dict.append(date_dict)
 
-    return jsonify(results_dict)
+    return jsonify(precipitation_dict)
 
 @app.route("/api/v1.0/stations")
 def stations():
     results = session.query(Station.station).all()
-
-    results_list = list(np.ravel(results))
-
-    return jsonify(results_list)
+    station_list = list(np.ravel(results))
+    return jsonify(station_list)
 
 @app.route("/api/v1.0/tobs")
 def tobs():
     results = session.query(Measurement.tobs).\
-        filter(Measurement.date >= "2016-08-20").\
-        filter(Measurement.date <= "2017-08-30").all()
+        filter(Measurement.date >= "2016-08-23").\
+        filter(Measurement.date <= "2017-08-23").all()
 
-    results_list = list(np.ravel(results))
+    tobs_list = list(np.ravel(results))
 
-    return jsonify(results_list)
+    return jsonify(tobs_list)
 
 
 
